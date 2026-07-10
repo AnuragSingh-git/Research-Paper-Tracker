@@ -1,4 +1,6 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { logoutUser } from "../../services/authApi";
+import { toast } from "sonner";
 
 import {
   LayoutDashboard,
@@ -26,8 +28,32 @@ const menus = [
 ];
 
 export default function Sidebar() {
+
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+
+    try {
+
+      await logoutUser();
+
+      toast.success("Logged Out Successfully");
+
+      navigate("/");
+
+    } catch (error) {
+
+      toast.error(
+        error.response?.data?.message ||
+        "Logout Failed"
+      );
+
+    }
+
+  };
+
   return (
-    <aside className="w-64 bg-white shadow-lg border-r">
+    <aside className="w-64 bg-white shadow-lg border-r relative">
 
       <div className="h-20 flex items-center justify-center border-b">
 
@@ -56,22 +82,22 @@ export default function Sidebar() {
               }
             >
               <Icon size={20} />
-
               {item.title}
             </NavLink>
           );
+
         })}
 
       </nav>
 
-      <div className="absolute bottom-6 left-4">
+      <div className="absolute bottom-6 left-4 right-4">
 
-        <button className="flex items-center gap-3 rounded-lg p-3 hover:bg-red-50 text-red-600">
-
-          <LogOut />
-
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 rounded-lg p-3 hover:bg-red-50 text-red-600 transition"
+        >
+          <LogOut size={20} />
           Logout
-
         </button>
 
       </div>

@@ -6,7 +6,8 @@ import {
     getSummary,
     getFunnel,
     getScatter,
-    getDomainStage
+    getDomainStage,
+    getDashboard
 } from "../controllers/analytics.controller.js";
 
 const router = express.Router();
@@ -20,5 +21,7 @@ router.get("/funnel", getFunnel);
 router.get("/scatter", getScatter);
 
 router.get("/domain-stage", getDomainStage);
+
+router.get("/dashboard", getDashboard);
 
 export default router;

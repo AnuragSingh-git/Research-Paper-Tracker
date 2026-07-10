@@ -1,223 +1,239 @@
 import mongoose from "mongoose";
-
 import Paper from "../models/Paper.js";
 
-export const summaryAnalytics=async(userId)=>{
+export const summaryAnalytics = async (userId) => {
 
-const totalPapers=await Paper.countDocuments({
+  const totalPapers = await Paper.countDocuments({
+    owner: userId,
+  });
 
-owner:userId
+  const fullyRead = await Paper.countDocuments({
+    owner: userId,
+    readingStage: "Fully Read",
+  });
 
-});
+  const stageSummary = await Paper.aggregate([
 
-const fullyRead=await Paper.countDocuments({
+    {
+      $match: {
+        owner: new mongoose.Types.ObjectId(userId),
+      },
+    },
 
-owner:userId,
+    {
+      $group: {
+        _id: "$readingStage",
+        count: {
+          $sum: 1,
+        },
+      },
+    },
 
-readingStage:"Fully Read"
+    {
+      $sort: {
+        _id: 1,
+      },
+    },
 
-});
+  ]);
 
-const papersByStage=await Paper.aggregate([
+  const averageCitation = await Paper.aggregate([
 
-{
+    {
+      $match: {
+        owner: new mongoose.Types.ObjectId(userId),
+      },
+    },
 
-$match:{
+    {
+      $group: {
+        _id: "$researchDomain",
+        averageCitation: {
+          $avg: "$citationCount",
+        },
+      },
+    },
 
-owner:new mongoose.Types.ObjectId(userId)
+    {
+      $sort: {
+        _id: 1,
+      },
+    },
 
-}
+  ]);
 
-},
+  return {
 
-{
+    stageSummary,
 
-$group:{
+    averageCitation,
 
-_id:"$readingStage",
+    completionRate:
+      totalPapers === 0
+        ? 0
+        : Number(((fullyRead / totalPapers) * 100).toFixed(2)),
 
-count:{
-
-$sum:1
-
-}
-
-}
-
-}
-
-]);
-
-const averageCitationPerDomain=await Paper.aggregate([
-
-{
-
-$match:{
-
-owner:new mongoose.Types.ObjectId(userId)
-
-}
-
-},
-
-{
-
-$group:{
-
-_id:"$researchDomain",
-
-averageCitation:{
-
-$avg:"$citationCount"
-
-}
-
-}
-
-}
-
-]);
-
-return{
-
-totalPapers,
-
-fullyRead,
-
-completionRate:
-
-totalPapers===0
-
-?0
-
-:Number(((fullyRead/totalPapers)*100).toFixed(2)),
-
-papersByStage,
-
-averageCitationPerDomain
+  };
 
 };
 
-};
+export const funnelAnalytics = async (userId) => {
 
-export const funnelAnalytics=async(userId)=>{
+  return await Paper.aggregate([
 
-return await Paper.aggregate([
+    {
+      $match: {
+        owner: new mongoose.Types.ObjectId(userId),
+      },
+    },
 
-{
+    {
+      $group: {
+        _id: "$readingStage",
+        count: {
+          $sum: 1,
+        },
+      },
+    },
 
-$match:{
+    {
+      $project: {
+        _id: 0,
+        readingStage: "$_id",
+        count: 1,
+      },
+    },
 
-owner:new mongoose.Types.ObjectId(userId)
-
-}
-
-},
-
-{
-
-$group:{
-
-_id:"$readingStage",
-
-value:{
-
-$sum:1
-
-}
-
-}
-
-},
-
-{
-
-$project:{
-
-_id:0,
-
-stage:"$_id",
-
-value:1
-
-}
-
-}
-
-]);
+  ]);
 
 };
 
-export const scatterAnalytics=async(userId)=>{
+export const scatterAnalytics = async (userId) => {
 
-return await Paper.find(
+  return await Paper.find({
 
-{
+    owner: userId,
 
-owner:userId
+  }).select(
 
-}
+    "title citationCount impactScore"
 
-).select(
-
-"title citationCount impactScore"
-
-);
+  );
 
 };
 
-export const domainStageAnalytics=async(userId)=>{
+export const domainStageAnalytics = async (userId) => {
 
-return await Paper.aggregate([
+  const papers = await Paper.find({
 
-{
+    owner: userId,
 
-$match:{
+  }).select("researchDomain readingStage");
 
-owner:new mongoose.Types.ObjectId(userId)
+  const stages = [
 
-}
+    "Abstract Read",
 
-},
+    "Introduction Done",
 
-{
+    "Methodology Done",
 
-$group:{
+    "Results Analyzed",
 
-_id:{
+    "Fully Read",
 
-domain:"$researchDomain",
+    "Notes Completed",
 
-stage:"$readingStage"
+  ];
 
-},
+  const result = {};
 
-count:{
+  papers.forEach((paper) => {
 
-$sum:1
+    if (!result[paper.researchDomain]) {
 
-}
+      result[paper.researchDomain] = {
 
-}
+        _id: paper.researchDomain,
 
-},
+      };
 
-{
+      stages.forEach((stage) => {
 
-$project:{
+        result[paper.researchDomain][stage] = 0;
 
-_id:0,
+      });
 
-domain:"$_id.domain",
+    }
 
-stage:"$_id.stage",
+    result[paper.researchDomain][paper.readingStage]++;
 
-count:1
+  });
 
-}
+  return Object.values(result);
 
-}
+};
 
-]);
+export const dashboardAnalytics = async (userId) => {
+
+  const papers = await Paper.find({
+
+    owner: userId,
+
+  }).sort({
+
+    createdAt: -1,
+
+  });
+
+  const totalPapers = papers.length;
+
+  const fullyRead = papers.filter(
+
+    (paper) => paper.readingStage === "Fully Read"
+
+  ).length;
+
+  const totalCitation = papers.reduce(
+
+    (sum, paper) =>
+
+      sum + Number(paper.citationCount || 0),
+
+    0
+
+  );
+
+  const averageCitation =
+
+    totalPapers > 0
+
+      ? Number((totalCitation / totalPapers).toFixed(1))
+
+      : 0;
+
+  const completionRate =
+
+    totalPapers > 0
+
+      ? Number(((fullyRead / totalPapers) * 100).toFixed(1))
+
+      : 0;
+
+  const recentPapers = papers.slice(0, 5);
+
+  return {
+
+    totalPapers,
+
+    fullyRead,
+
+    averageCitation,
+
+    completionRate,
+
+    recentPapers,
+
+  };
 
 };

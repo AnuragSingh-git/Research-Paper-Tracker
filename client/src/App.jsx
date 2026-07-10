@@ -1,104 +1,65 @@
-import { Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "./pages/Login";
-
 import Register from "./pages/Register";
-
 import Dashboard from "./pages/Dashboard";
-
 import Library from "./pages/Library";
-
 import Analytics from "./pages/Analytics";
 
-import ProtectedRoute from "./components/auth/ProtectedRoute";
+import DashboardLayout from "./components/layout/DashboardLayout.jsx";
+import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 
-import DashboardLayout from "./components/layout/DashboardLayout";
+function App() {
 
-function App(){
+  return (
+    <BrowserRouter>
 
-return(
+      <Routes>
 
-<Routes>
+        <Route path="/" element={<Login />} />
 
-<Route
+        <Route
+          path="/register"
+          element={<Register />}
+        />
 
-path="/"
+        <Route
+          element={<ProtectedRoute />}
+        >
 
-element={<Login/>}
+          <Route
+            path="/dashboard"
+            element={
+              <DashboardLayout>
+                <Dashboard />
+              </DashboardLayout>
+            }
+          />
 
-/>
+          <Route
+            path="/library"
+            element={
+              <DashboardLayout>
+                <Library />
+              </DashboardLayout>
+            }
+          />
 
-<Route
+          <Route
+            path="/analytics"
+            element={
+              <DashboardLayout>
+                <Analytics />
+              </DashboardLayout>
+            }
+          />
 
-path="/register"
+        </Route>
 
-element={<Register/>}
+      </Routes>
 
-/>
-
-<Route
-
-path="/dashboard"
-
-element={
-
-<ProtectedRoute>
-
-<DashboardLayout>
-
-<Dashboard/>
-
-</DashboardLayout>
-
-</ProtectedRoute>
-
-}
-
-/>
-
-<Route
-
-path="/library"
-
-element={
-
-<ProtectedRoute>
-
-<DashboardLayout>
-
-<Library/>
-
-</DashboardLayout>
-
-</ProtectedRoute>
-
-}
-
-/>
-
-<Route
-
-path="/analytics"
-
-element={
-
-<ProtectedRoute>
-
-<DashboardLayout>
-
-<Analytics/>
-
-</DashboardLayout>
-
-</ProtectedRoute>
-
-}
-
-/>
-
-</Routes>
-
-);
+    </BrowserRouter>
+  );
 
 }
 

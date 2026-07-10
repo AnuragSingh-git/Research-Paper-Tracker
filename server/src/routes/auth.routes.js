@@ -1,4 +1,8 @@
 import express from "express";
+import {
+  registerValidator,
+  loginValidator,
+} from "../validators/auth.validator.js";
 
 import validate from "../middlewares/validate.middleware.js";
 
@@ -14,9 +18,9 @@ import verifyJWT from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.post("/register", validate, registerUser);
+router.post("/register", registerValidator, validate, registerUser);
 
-router.post("/login", validate, loginUser);
+router.post("/login", loginValidator, validate, loginUser);
 
 router.post("/logout", verifyJWT, logoutUser);
 

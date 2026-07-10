@@ -20,6 +20,9 @@ import jwt from "jsonwebtoken";
 
 export const registerUser = asyncHandler(async (req, res) => {
 
+    console.log("Register Controller Called");
+    console.log(req.body);
+
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {

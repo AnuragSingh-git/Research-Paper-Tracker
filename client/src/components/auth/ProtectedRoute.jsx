@@ -1,29 +1,31 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
 import useAuth from "../../hooks/useAuth";
 
-export default function ProtectedRoute({children}){
+export default function ProtectedRoute() {
 
-const{
+    const { user, loading } = useAuth();
 
-user,
+    if (loading) {
 
-loading
+        return (
 
-}=useAuth();
+            <div className="min-h-screen flex items-center justify-center">
 
-if(loading){
+                Loading...
 
-return <h1>Loading...</h1>;
+            </div>
 
-}
+        );
 
-if(!user){
+    }
 
-return <Navigate to="/"/>;
+    if (!user) {
 
-}
+        return <Navigate to="/" replace />;
 
-return children;
+    }
+
+    return <Outlet />;
 
 }

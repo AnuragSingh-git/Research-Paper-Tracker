@@ -1,43 +1,50 @@
-import { createContext, useEffect, useState } from "react";
-import api from "../services/api.js";
+import {
 
-export const AuthContext = createContext();
+createContext,
 
-export default function AuthProvider({ children }) {
+useContext,
+
+useEffect,
+
+useState,
+
+} from "react";
+
+import { getCurrentUser } from "../services/authApi";
+
+const AuthContext = createContext();
+
+export function AuthProvider({ children }) {
 
     const [user, setUser] = useState(null);
 
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-
-        checkAuth();
-
-    }, []);
-
     const checkAuth = async () => {
 
         try {
 
-            const res = await api.get("/auth/me");
+            const res = await getCurrentUser();
 
             setUser(res.data.data);
 
-        }
-
-        catch {
+        } catch {
 
             setUser(null);
 
-        }
-
-        finally {
+        } finally {
 
             setLoading(false);
 
         }
 
     };
+
+    useEffect(() => {
+
+        checkAuth();
+
+    }, []);
 
     return (
 
@@ -51,7 +58,7 @@ export default function AuthProvider({ children }) {
 
                 loading,
 
-                checkAuth
+                checkAuth,
 
             }}
 
@@ -64,3 +71,5 @@ export default function AuthProvider({ children }) {
     );
 
 }
+
+export const useAuthContext = () => useContext(AuthContext);
