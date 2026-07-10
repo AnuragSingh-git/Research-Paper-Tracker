@@ -28,6 +28,18 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
 
+app.use(
+
+cors({
+
+origin:process.env.CLIENT_URL,
+
+credentials:true
+
+})
+
+);
+
 app.use("/api/auth", authRoutes);
 
 app.use("/api/papers", paperRoutes);
