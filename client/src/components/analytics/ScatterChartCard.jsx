@@ -21,7 +21,7 @@ function CustomTooltip({ active, payload }) {
   const paper = payload[0].payload;
 
   return (
-    <div className="bg-white border rounded-lg shadow-lg p-4 min-w-[220px]">
+    <div className="bg-white border rounded-lg shadow-lg p-4 min-w-95">
 
       <h3 className="font-semibold text-slate-800 mb-3">
         {paper.title}
