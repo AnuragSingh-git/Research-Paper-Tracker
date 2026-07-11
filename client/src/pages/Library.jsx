@@ -1,59 +1,107 @@
 import { useEffect, useState } from "react";
+import { Filter } from "lucide-react";
 
 import { getPapers } from "../services/paperApi";
 
 import PaperTable from "../components/library/PaperTable";
-
 import PaperFilters from "../components/library/PaperFilters";
-
 import AddPaperDialog from "../components/library/AddPaperDialog";
 
-export default function Library(){
+import { Button } from "../components/ui/button";
 
-const[papers,setPapers]=useState([]);
+export default function Library() {
 
-const[filters,setFilters]=useState({});
+  const [papers, setPapers] = useState([]);
 
-const loadPapers=async()=>{
+  const [filters, setFilters] = useState({});
 
-const res=await getPapers(filters);
+  const [showFilters, setShowFilters] = useState(false);
 
-setPapers(res.data.data.papers);
+  const loadPapers = async () => {
 
-};
+    try {
 
-useEffect(()=>{
+      const res = await getPapers(filters);
 
-loadPapers();
+      setPapers(res.data.data.papers);
 
-},[filters]);
+    }
 
-return(
+    catch (error) {
 
-<div className="space-y-6">
+      console.error(error);
 
-<PaperFilters
+    }
 
-setFilters={setFilters}
+  };
 
-/>
+  useEffect(() => {
 
-<AddPaperDialog
+    loadPapers();
 
-reload={loadPapers}
+  }, [filters]);
 
-/>
+  return (
 
-<PaperTable
+    <div className="space-y-6">
 
-papers={papers}
+      <div className="flex items-center justify-between">
 
-reload={loadPapers}
+        <div>
 
-/>
+          <h1 className="text-3xl font-bold">
 
-</div>
+            Paper Library
 
-);
+          </h1>
+
+          <p className="text-slate-500 mt-1">
+
+            Manage and organize all your research papers.
+
+          </p>
+
+        </div>
+
+        <div className="flex items-center gap-3">
+
+          <Button
+            variant="outline"
+            onClick={() =>
+              setShowFilters(!showFilters)
+            }
+          >
+
+            <Filter className="mr-2 h-4 w-4" />
+
+            {showFilters ? "Hide Filters" : "Filters"}
+
+          </Button>
+
+          <AddPaperDialog reload={loadPapers} />
+
+        </div>
+
+      </div>
+
+      {showFilters && (
+
+        <PaperFilters
+    onApplyFilters={setFilters}
+    />
+
+      )}
+
+      <PaperTable
+
+        papers={papers}
+
+        reload={loadPapers}
+
+      />
+
+    </div>
+
+  );
 
 }

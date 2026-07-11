@@ -1,52 +1,62 @@
 import {
+  ResponsiveContainer,
   FunnelChart,
   Funnel,
   Tooltip,
-  ResponsiveContainer,
   LabelList,
+  Cell,
 } from "recharts";
 
 import { Card, CardContent } from "../ui/card";
 
-const COLORS = [
-  "#3b82f6",
-  "#22c55e",
-  "#eab308",
-  "#f97316",
-  "#8b5cf6",
-  "#ef4444",
-];
-
 export default function FunnelChartCard({ data }) {
-  const chartData = data.map((item, index) => ({
-    ...item,
-    fill: COLORS[index],
-  }));
+
+  const colors = [
+    "#3b82f6",
+    "#22c55e",
+    "#f59e0b",
+    "#ef4444",
+    "#06b6d4",
+    "#8b5cf6",
+  ];
 
   return (
-    <Card>
+    <Card className="shadow-lg rounded-xl">
+
       <CardContent className="p-6">
 
-        <h2 className="text-xl font-semibold mb-4">
+        <h2 className="text-2xl font-bold mb-6">
           Reading Funnel
         </h2>
 
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="100%" height={450}>
 
           <FunnelChart>
 
             <Tooltip />
 
             <Funnel
-              dataKey="count"
-              data={chartData}
-              isAnimationActive
+              data={data}
+              dataKey="value"
+              nameKey="stage"
             >
 
+              {data.map((entry, index) => (
+                <Cell
+                  key={index}
+                  fill={colors[index]}
+                />
+              ))}
+
               <LabelList
+                dataKey="stage"
                 position="right"
-                dataKey="readingStage"
-                fill="#111"
+              />
+
+              <LabelList
+                dataKey="value"
+                position="center"
+                fill="#fff"
               />
 
             </Funnel>
@@ -56,6 +66,7 @@ export default function FunnelChartCard({ data }) {
         </ResponsiveContainer>
 
       </CardContent>
+
     </Card>
   );
 }

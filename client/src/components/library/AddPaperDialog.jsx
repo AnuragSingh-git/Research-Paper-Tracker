@@ -93,25 +93,13 @@ export default function AddPaperDialog({
       onOpenChange={setOpen}
     >
 
-      <DialogTrigger asChild>
-
-        {
-
-          children ?
-
-            children
-
-            :
-
-            <Button>
-
-              + Add Paper
-
-            </Button>
-
-        }
-
-      </DialogTrigger>
+      <DialogTrigger render={
+  children ? (
+    children
+  ) : (
+    <Button>+ Add Paper</Button>
+  )
+  } />
 
       <DialogContent className="sm:max-w-2xl w-full max-h-[85vh] overflow-y-auto rounded-xl p-6">
 

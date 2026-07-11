@@ -55,33 +55,39 @@ owner:req.user._id
 
 };
 
-if(researchDomain){
+if (researchDomain) {
 
-query.researchDomain={
+    query.researchDomain = {
 
-$in:researchDomain.split(",")
+        $in: Array.isArray(researchDomain)
+            ? researchDomain
+            : [researchDomain]
 
-};
-
-}
-
-if(readingStage){
-
-query.readingStage={
-
-$in:readingStage.split(",")
-
-};
+    };
 
 }
 
-if(impactScore){
+if (readingStage) {
 
-query.impactScore={
+    query.readingStage = {
 
-$in:impactScore.split(",")
+        $in: Array.isArray(readingStage)
+            ? readingStage
+            : [readingStage]
 
-};
+    };
+
+}
+
+if (impactScore) {
+
+    query.impactScore = {
+
+        $in: Array.isArray(impactScore)
+            ? impactScore
+            : [impactScore]
+
+    };
 
 }
 
