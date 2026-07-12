@@ -174,7 +174,7 @@ REFRESH_TOKEN_EXPIRY=7d
 
 CLIENT_URL=http://localhost:5173
 
-NODE_ENV=development
+
 ```
 
 Run the backend:
