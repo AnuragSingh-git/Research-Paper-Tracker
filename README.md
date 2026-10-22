@@ -155,7 +155,7 @@ cd server
 npm install
 ```
 
-Create a `.env` file inside the `server` directory.
+Create a `.env` file inside the `server` directory
 
 Example:
 
