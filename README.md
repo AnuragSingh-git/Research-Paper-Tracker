@@ -11,7 +11,7 @@ https://research-paper-tracker-fawn.vercel.app
 
 * User registration and login
 * JWT Authentication (Access & Refresh Tokens)
-* Secure HTTP-only cookie
+* Secure HTTP-only cookies
 * Protected routes
 * Logout functionality
 
