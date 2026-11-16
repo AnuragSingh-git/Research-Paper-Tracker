@@ -22,7 +22,7 @@ https://research-paper-tracker-fawn.vercel.app
 * Delete papers
 * View all papers in a searchable table
 
-Each paper store:
+Each paper stores:
 
 * Title
 * First Author
