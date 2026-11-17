@@ -38,7 +38,7 @@ Each paper stores:
 
 Filter papers using multiple criteria:
 
-* Search by paper title
+* Search by paper titles
 * Reading Stage (multiple selection)
 * Research Domain (multiple selection)
 * Impact Score (multiple selection)
