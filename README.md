@@ -20,7 +20,7 @@ https://research-paper-tracker-fawn.vercel.app
 * Add new research papers
 * Edit paper details
 * Delete papers
-* View all papers in a searchable table
+* View all papers in a searchable tables
 
 Each paper stores:
 
